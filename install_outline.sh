@@ -37,9 +37,9 @@ chmod +x /usr/bin/tun2socks
 fi
 
 # Step 5: Check for existing config in /etc/config/network then add entry
-if ! grep -q "config interface 'tunOutline'" /etc/config/network; then
+if ! grep -q "config interface 'tunnel'" /etc/config/network; then
 echo "
-config interface 'tunOutline'
+config interface 'tunnel'
     option device 'tun1'
     option proto 'static'
     option ipaddr '172.16.10.1'
@@ -54,7 +54,7 @@ if ! grep -q "option name 'proxy'" /etc/config/firewall; then
 echo "
 config zone
     option name 'proxy'
-    list network 'tunOutline'
+    list network 'tunnel'
     option forward 'REJECT'
     option output 'ACCEPT'
     option input 'REJECT'
