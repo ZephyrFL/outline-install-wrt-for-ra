@@ -37,10 +37,10 @@ chmod +x /usr/bin/tun2socks
 fi
 
 # Step 5: Check for existing config in /etc/config/network then add entry
-if ! grep -q "config interface 'tunnel'" /etc/config/network; then
+if ! grep -q "config interface 'tunOutline'" /etc/config/network; then
 echo "
-config interface 'tunnel'
-    option device 'tun82'
+config interface 'tunOutline'
+    option device 'tun1'
     option proto 'static'
     option ipaddr '172.16.10.1'
     option netmask '255.255.255.252'
@@ -54,13 +54,13 @@ if ! grep -q "option name 'proxy'" /etc/config/firewall; then
 echo "
 config zone
     option name 'proxy'
-    list network 'tunnel'
+    list network 'tunOutline'
     option forward 'REJECT'
     option output 'ACCEPT'
     option input 'REJECT'
     option masq '1'
     option mtu_fix '1'
-    option device 'tun82'
+    option device 'tun1'
     option family 'ipv4'
 
 config forwarding
@@ -102,7 +102,7 @@ START=99
 STOP=89
 
 #PROG=/usr/bin/tun2socks
-#IF="tun82"
+#IF="tun1"
 #OUTLINE_CONFIG="$OUTLINECONF"
 #LOGLEVEL="warning"
 #BUFFER="64kb"
@@ -110,7 +110,7 @@ STOP=89
 start_service() {
     procd_open_instance
     procd_set_param user root
-    procd_set_param command /usr/bin/tun2socks -device tun82 -tcp-rcvbuf 64kb -tcp-sndbuf 64kb  -proxy "$OUTLINECONF" -loglevel "warning"
+    procd_set_param command /usr/bin/tun2socks -device tun1 -tcp-rcvbuf 64kb -tcp-sndbuf 64kb  -proxy "$OUTLINECONF" -loglevel "warning"
     procd_set_param stdout 1
     procd_set_param stderr 1
     procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
@@ -145,7 +145,7 @@ reload_service() {
     start
 }
 EOL
-DEFAULT_GATEWAY="n"
+DEFAULT_GATEWAY=""
 #Ask user to use Outline as default gateway
 
 if [ "$DEFAULT_GATEWAY" = "y" ]; then
@@ -155,9 +155,9 @@ service_started() {
     # This function checks if the default gateway is Outline, if no changes it
      echo 'Replacing default gateway for Outline...'
      sleep 2s
-     if ip link show tun82 | grep -q "UP" ; then
+     if ip link show tun1 | grep -q "UP" ; then
          ip route del default #Deletes existing default route
-         ip route add default via 172.16.10.2 dev tun82 #Creates default route through the proxy
+         ip route add default via 172.16.10.2 dev tun1 #Creates default route through the proxy
      fi
 }
 start() {
@@ -170,7 +170,7 @@ if ! grep -q "sleep 10" /etc/rc.local; then
 sed '/exit 0/i\
 sleep 10\
 #Check if default route is through Outline and change if not\
-if ! ip route | grep -q '\''^default via 172.16.10.2 dev tun82'\''; then\
+if ! ip route | grep -q '\''^default via 172.16.10.2 dev tun1'\''; then\
     /etc/init.d/tun2socks start\
 fi\
 ' /etc/rc.local > /tmp/rc.local.tmp && mv /tmp/rc.local.tmp /etc/rc.local
