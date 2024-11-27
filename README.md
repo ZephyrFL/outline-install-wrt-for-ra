@@ -13,7 +13,7 @@
 Скачаейте скрипт в ОЗУ сделайем его исполняемым:
 
     cd /tmp
-    wget https://raw.githubusercontent.com/1andrevich/outline-install-wrt/main/install_outline.sh -O install_outline.sh
+    wget https://raw.githubusercontent.com/ZephyrFL/outline-install-wrt-for-ra/main/install_outline.sh -O install_outline.sh
     chmod +x install_outline.sh
 
 Вам потребуется не менее **9 MiB свободного места** /
