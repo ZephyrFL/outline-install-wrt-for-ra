@@ -73,9 +73,10 @@ config forwarding
 fi
 
 echo 'found entry into /etc/config/firewall'
-# Step 7: Restart network
-/etc/init.d/network restart
-echo 'Restarting Network....'
+# Step 7: Apply network changes
+uci commit network
+ifup tunnel
+echo 'Network configuration applied for "tunnel" interface'
 
 # Step 8: Read user variable for OUTLINE HOST IP
 read -p "Enter Outline Server IP: " OUTLINEIP
